@@ -1,10 +1,10 @@
 package me.onebone.actaeon.entity;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
@@ -42,12 +42,21 @@ abstract public class MovingEntity extends EntityCreature{
 		this.setImmobile(false);
 	}
 
+
+	public void setBaby(boolean isBaby){
+		this.setDataFlag(DATA_FLAGS, Entity.DATA_FLAG_BABY,isBaby);
+	}
+
 	public Map<String, MovingEntityHook> getHooks() {
 		return hooks;
 	}
 
 	public void addHook(String key, MovingEntityHook hook) {
 		this.hooks.put(key, hook);
+	}
+
+	public void removeHook(String key){
+		this.hooks.remove(key);
 	}
 
 	@Override
@@ -98,7 +107,7 @@ abstract public class MovingEntity extends EntityCreature{
 		if (this.targetFinder != null) this.targetFinder.onUpdate();
 
 		if(this.routeLeading && this.onGround && this.hasSetTarget() && !this.route.isSearching() && System.currentTimeMillis() >= this.route.stopRouteFindUntil && (this.route.getDestination() == null || this.route.getDestination().distance(this.getTarget()) > 2)){ // 대상이 이동함
-            if (RouteFinderSearchAsyncTask.getTaskSize() < 50) Server.getInstance().getScheduler().scheduleAsyncTask(new RouteFinderSearchAsyncTask(this.route, this.level, this, this.getTarget(), this.boundingBox));
+			if (RouteFinderSearchAsyncTask.getTaskSize() < 50) Server.getInstance().getScheduler().scheduleAsyncTask(new RouteFinderSearchAsyncTask(this.route, this.level, this, this.getTarget(), this.boundingBox));
 
 			/*if(this.route.isSearching()) this.route.research();
 			else this.route.search();*/
@@ -112,7 +121,7 @@ abstract public class MovingEntity extends EntityCreature{
 
 				Node node = this.route.get();
 				if(node != null){
-					//Server.broadcastPacket(level.getPlayers().values().stream().toArray(Player[]::new), new cn.nukkit.level.particle.RedstoneParticle(node.getVector3(), 2).encode()[0]);
+					//level.addParticle(new cn.nukkit.level.particle.RedstoneParticle(node.getVector3(), 2));
 					Vector3 vec = node.getVector3();
 					double diffX = Math.pow(vec.x - this.x, 2);
 					double diffZ = Math.pow(vec.z - this.z, 2);
@@ -181,16 +190,16 @@ abstract public class MovingEntity extends EntityCreature{
 		}
 
 		if(this.hasSetTarget() && (forceSearch || !this.route.hasRoute())){
-            this.route.forceStop();
-            Server.getInstance().getScheduler().scheduleAsyncTask(new RouteFinderSearchAsyncTask(this.route, this.level, this, this.getTarget(), this.boundingBox.clone()));
+			this.route.forceStop();
+			Server.getInstance().getScheduler().scheduleAsyncTask(new RouteFinderSearchAsyncTask(this.route, this.level, this, this.getTarget(), this.boundingBox.clone()));
 			/*if(this.route.isSearching()) this.route.research();
 			else this.route.search();*/
 		}
 	}
 
-    public Vector3 getRealTarget() {
-        return this.target;
-    }
+	public Vector3 getRealTarget() {
+		return this.target;
+	}
 
 	public Vector3 getTarget(){
 		return new Vector3(this.target.x, this.target.y, this.target.z);
@@ -273,17 +282,21 @@ abstract public class MovingEntity extends EntityCreature{
 		super.knockBack(attacker, damage, x, z, base / 2);
 	}
 
-    public void setRoute(RouteFinder route) {
-        this.route = route;
-    }
+	public void setRoute(RouteFinder route) {
+		this.route = route;
+	}
 
-    public RouteFinder getRoute() {
-        return route;
-    }
+	public RouteFinder getRoute() {
+		return route;
+	}
 
-    public void setTargetFinder(TargetFinder targetFinder) {
-        this.targetFinder = targetFinder;
-    }
+	public TargetFinder getTargetFinder() {
+		return targetFinder;
+	}
+
+	public void setTargetFinder(TargetFinder targetFinder) {
+		this.targetFinder = targetFinder;
+	}
 
 	public void updateBotTask(MovingEntityTask task) {
 		if (this.task != null) this.task.forceStop();
@@ -303,5 +316,10 @@ abstract public class MovingEntity extends EntityCreature{
 		this.lookAtFront = lookAtFront;
 	}
 
+	@Override
+	public boolean attack(EntityDamageEvent source) {
+		new ArrayList<>(this.hooks.values()).forEach(hook -> hook.onDamage(source));
+		return super.attack(source);
+	}
 }
 

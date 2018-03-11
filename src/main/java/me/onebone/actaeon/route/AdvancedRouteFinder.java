@@ -8,7 +8,7 @@ import me.onebone.actaeon.entity.MovingEntity;
 
 import java.util.*;
 
-public class AdvancedRouteFinder extends RouteFinder{
+public class AdvancedRouteFinder extends RouteFinder {
 	private boolean succeed = false, searching = false;
 
 	private Vector3 realDestination = null;
@@ -19,6 +19,7 @@ public class AdvancedRouteFinder extends RouteFinder{
 
 	public AdvancedRouteFinder(MovingEntity entity){
 		super(entity);
+		this.setLevel(entity.getLevel());
 	}
 
 	@Override
@@ -71,12 +72,10 @@ public class AdvancedRouteFinder extends RouteFinder{
 				while((node = node.getParent()) != null){
 					Node lastNode = nodes.get(nodes.size() - 1);
 					node.add(0.5, 0, 0.5);
-					Vector3 direction = new Vector3(node.getX() - lastNode.getX(), node.getY() - lastNode.getY(), node.getZ() - lastNode.getZ()).normalize().divide(4);
+					Vector3 direction = new Vector3(node.getX() - lastNode.getX(), node.getY() - lastNode.getY(), node.getZ() - lastNode.getZ()).normalize().divide(2);
 					if (lastNode.getY() == node.getY() && direction.lengthSquared() > 0) {  //Y不改变
-						WalkableIterator iterator = new WalkableIterator(this, level, lastNode.getVector3(), direction, this.entity.getWidth(), (int)lastNode.getVector3().distance(node.getVector3()) + 1);
+						WalkableIterator iterator = new WalkableIterator(this, level, lastNode.getVector3(), direction, 0, (int)lastNode.getVector3().distance(node.getVector3()) + 1);
 						if (iterator.hasNext()) {  //无法直接到达
-							//Block block = iterator.next();
-							//Server.getInstance().getLogger().info(block.toString());
 							//level.addParticle(new cn.nukkit.level.particle.HappyVillagerParticle(node.getVector3()));
 							nodes.add(last);
 							//Server.broadcastPacket(level.getPlayers().values().stream().toArray(Player[]::new), new cn.nukkit.level.particle.CriticalParticle(node.getVector3(), 3).encode()[0]);
@@ -98,12 +97,12 @@ public class AdvancedRouteFinder extends RouteFinder{
 
 				Collections.reverse(nodes);
 
-				nodes.remove(nodes.size() - 1);
+				nodes.remove(nodes.size() - 1);  //移除原来最终坐标（为整方块中心）
 				Vector3 highestUnder = this.getHighestUnder(this.destination.getX(), this.destination.getY(), this.destination.getZ());
 				if (highestUnder != null) {
 					Node realDestinationNode = new Node(new Vector3(this.destination.getX(), highestUnder.getY() + 1, this.destination.getZ()));
 					realDestinationNode.setParent(node);
-					nodes.add(realDestinationNode);
+					nodes.add(realDestinationNode);  //添加目的地最终坐标
 				}
 
 				nodes.forEach(this::addNode);
@@ -190,7 +189,7 @@ public class AdvancedRouteFinder extends RouteFinder{
 			int blockId = level.getBlockIdAt((int)x, y, (int)z);
 
 			if(!canWalkOn(blockId)) return new Vector3(x, y, z);
-			if(!canPassThrough(blockId)) return new Vector3(x, y, z);
+			if(!Block.get(blockId).canPassThrough()) return new Vector3(x, y, z);
 		}
 		return null;
 	}
@@ -237,7 +236,6 @@ public class AdvancedRouteFinder extends RouteFinder{
 		}
 	}
 
-
 	@Override
 	public boolean research(){
 		this.resetNodes();
@@ -258,11 +256,11 @@ public class AdvancedRouteFinder extends RouteFinder{
 	private class Grid{
 		private Map<Double, Map<Double, Map<Double, Node>>> grid = new HashMap<>();
 
-		public void clear(){
+		public synchronized void clear(){
 			grid.clear();
 		}
 
-		public void putNode(Vector3 vec, Node node){
+		public synchronized void putNode(Vector3 vec, Node node){
 			vec = vec.floor();
 
 			if(!grid.containsKey(vec.x)){

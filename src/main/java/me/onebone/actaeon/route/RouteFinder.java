@@ -1,13 +1,12 @@
 package me.onebone.actaeon.route;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import me.onebone.actaeon.entity.MovingEntity;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 public abstract class RouteFinder{
@@ -23,19 +22,10 @@ public abstract class RouteFinder{
 	protected boolean forceStop = false;
 	public long stopRouteFindUntil = System.currentTimeMillis();
 
-	private static BitSet canPassThrough = null;
-
 	public RouteFinder(MovingEntity entity){
 		if(entity == null) throw new IllegalArgumentException("Entity cannot be null");
 
 		this.entity = entity;
-		if (canPassThrough == null) {
-			canPassThrough = new BitSet();
-			canPassThrough.set(0);
-			Item.getCreativeItems().stream().
-					filter(item -> item.getBlock().getId() > 0 && item.getBlock().canPassThrough()).
-					forEach(item -> canPassThrough.set(item.getId()));
-		}
 	}
 
 	public MovingEntity getEntity(){
@@ -164,7 +154,6 @@ public abstract class RouteFinder{
 		if(nodes.size() == 0) throw new IllegalStateException("There is no path found.");
 
 		if(this.arrived) return null;
-		//new ArrayList<>(this.nodes).forEach(n -> Server.broadcastPacket(level.getPlayers().values().stream().toArray(Player[]::new), new EntityFlameParticle(n.getVector3()).encode()[0]));
 		return nodes.get(current);
 	}
 
@@ -198,8 +187,4 @@ public abstract class RouteFinder{
 	 * @return true if finding route was success
 	 */
 	public abstract boolean isSuccess();
-
-	public static boolean canPassThrough(int blockId) {
-		return canPassThrough.get(blockId);
-	}
 }
