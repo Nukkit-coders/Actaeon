@@ -89,8 +89,13 @@ abstract public class MovingEntity extends EntityCreature{
 		if(this.closed){
 			return false;
 		}
-
-		new ArrayList<>(this.hooks.values()).forEach(hook -> hook.onUpdate(Server.getInstance().getTick()));
+		if(hooks != null) {
+			new ArrayList<>(this.hooks.values()).forEach(
+					hook -> hook.onUpdate(Server.getInstance().getTick())
+			);
+		} else {
+			hooks = new HashMap<>();
+		}
 		if (this.task != null) this.task.onUpdate(Server.getInstance().getTick());
 
 		boolean hasUpdate = super.entityBaseTick(tickDiff);

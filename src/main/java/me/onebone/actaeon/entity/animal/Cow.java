@@ -18,6 +18,11 @@ public class Cow extends Animal implements EntityAgeable{
 
 	public Cow(FullChunk chunk, CompoundTag nbt){
 		super(chunk, nbt);
+		isBaby = Utils.rand(1,3) == 1;
+		setBaby(isBaby);
+		if(isBaby){
+			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
+		}
 		this.addHook("targetFinder", new AnimalHook(this, 500, Item.get(Item.WHEAT), 10));
 	}
 
@@ -78,7 +83,7 @@ public class Cow extends Animal implements EntityAgeable{
 	@Override
 	public boolean onInteract(Player player, Item item) {
 		if(item.getId() == Item.BUCKET) {
-			player.getInventory().addItem(Item.get(335,0,1));
+			player.getInventory().addItem(Item.get(Item.BUCKET,1,1));
 			return true;
 		}
 		return false;
@@ -88,11 +93,6 @@ public class Cow extends Animal implements EntityAgeable{
 	protected void initEntity(){
 		super.initEntity();
 		setMaxHealth(10);
-		isBaby = Utils.rand(1,10) == 1;
-		setBaby(isBaby);
-		if(isBaby){
-			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
-		}
 	}
 
 }

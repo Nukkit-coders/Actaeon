@@ -14,6 +14,11 @@ public class Pig extends Animal implements EntityAgeable{
 
 	public Pig(FullChunk chunk, CompoundTag nbt) {
 		super(chunk, nbt);
+		isBaby = Utils.rand(1,3) == 1;
+		setBaby(isBaby);
+		if(isBaby){
+			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
+		}
 		this.addHook("targetFinder", new AnimalHook(this, 500, Item.get(Item.CARROTS), 10));
 	}
 
@@ -62,11 +67,6 @@ public class Pig extends Animal implements EntityAgeable{
 	protected void initEntity() {
 		super.initEntity();
 		setMaxHealth(10);
-		isBaby = Utils.rand(1,11) == 1;
-		setBaby(isBaby);
-		if(isBaby){
-			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
-		}
 	}
 
 	@Override

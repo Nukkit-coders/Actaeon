@@ -17,6 +17,11 @@ public class Chicken extends Animal implements EntityAgeable, Fallable{
 
 	public Chicken(FullChunk chunk, CompoundTag nbt) {
 		super(chunk, nbt);
+		isBaby = (Utils.rand(1,3) == 1);
+		setBaby(isBaby);
+		if(isBaby){
+			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
+		}
 		this.addHook("targetFinder", new AnimalHook(this, 500, Item.get(Item.WHEAT_SEEDS), 10));
 		this.addHook("egg", new ChickenEggHook(this));
 	}
@@ -77,11 +82,6 @@ public class Chicken extends Animal implements EntityAgeable, Fallable{
 	protected void initEntity(){
 		super.initEntity();
 		setMaxHealth(4);
-		isBaby = (Utils.rand(1,11) == 1);
-		setBaby(isBaby);
-		if(isBaby){
-			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
-		}
 	}
 
 	@Override

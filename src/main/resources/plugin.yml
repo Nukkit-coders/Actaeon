@@ -1,5 +1,5 @@
 name: Actaeon
-version: "VERSION"
+version: "0.0.1beta"
 author: onebone
 api: [1.0.0]
 main: me.onebone.actaeon.Actaeon

@@ -40,10 +40,13 @@ public class AnimalHook extends MovingEntityHook{
             double nearest = this.radius * this.radius;
 
             for (Player player : this.getEntity().getLevel().getPlayers().values()) {
-                if (this.getEntity().distanceSquared(player) < nearest) {
+                if (this.getEntity().distanceSquared(player) < nearest && player.getInventory().getItemInHand().getId() == item.getId()) {
                     near = player;
                     nearest = this.getEntity().distance(player);
                 }
+            }
+            if (entity.getTargetFinder() == null) {
+                entity.setTargetFinder(new StrollingTargetFinder(entity));
             }
 
             if (near != null) {
