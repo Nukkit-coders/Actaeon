@@ -1,18 +1,17 @@
 package me.onebone.actaeon.entity.animal;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.utils.DyeColor;
 import me.onebone.actaeon.Utils.Utils;
 import me.onebone.actaeon.hook.AnimalGrowHook;
 import me.onebone.actaeon.hook.AnimalHook;
+import me.onebone.actaeon.hook.EatGrassHook;
 import me.onebone.actaeon.hook.SheepWoolHook;
 
 import java.util.Random;
@@ -23,8 +22,6 @@ public class Sheep extends Animal {
 
 	private boolean sheared = false;
 	private int color = 0;
-	private EntityEventPacket packet;
-	private long nextEatGlass = 0;
 
 	public Sheep(FullChunk chunk, CompoundTag nbt) {
 		super(chunk, nbt);
@@ -34,6 +31,7 @@ public class Sheep extends Animal {
 			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20 * 60 * 10, 20 * 60 * 20)));
 		}
 		this.addHook("targetFinder", new AnimalHook(this, 500, new Item[]{Item.get(Item.WHEAT)}, 10));
+		this.addHook("eatGrass", new EatGrassHook(this));
 	}
 
 	@Override
@@ -100,10 +98,6 @@ public class Sheep extends Animal {
 
 	@Override
 	public boolean entityBaseTick(int tickDiff) {
-		if (Server.getInstance().getTick() >= this.nextEatGlass && packet != null && this.nextEatGlass != 0) {
-			Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
-			this.nextEatGlass = Server.getInstance().getTick() + Utils.rand(20*60,20*120);
-		}
 		return super.entityBaseTick(tickDiff);
 	}
 
@@ -130,14 +124,6 @@ public class Sheep extends Animal {
 		} else {
 			this.sheared = this.namedTag.getBoolean("Sheared");
 		}
-
-		if (packet == null) {
-			packet = new EntityEventPacket();
-			packet.eid = this.getId();
-			packet.event = EntityEventPacket.EAT_GRASS_ANIMATION;
-		}
-
-		this.nextEatGlass = Server.getInstance().getTick() + Utils.rand(20*60,20*120);
 
 		this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, this.sheared);
 	}

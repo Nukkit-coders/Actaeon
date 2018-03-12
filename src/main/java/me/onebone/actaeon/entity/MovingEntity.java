@@ -74,8 +74,12 @@ abstract public class MovingEntity extends EntityCreature{
 
 	public void jump(){
 		if(this.onGround){
-			this.motionY = 0.35;
+			this.motionY = Math.sqrt(2 * getJumpHeight() * getGravity());
 		}
+	}
+
+	public double getJumpHeight() {
+		return 1.25;
 	}
 
 	@Override
