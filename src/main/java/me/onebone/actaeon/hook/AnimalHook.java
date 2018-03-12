@@ -23,13 +23,13 @@ public class AnimalHook extends MovingEntityHook{
 
     private int radius;
     private long interval;
-    private Item item;
+    private Item[] items;
 
-    public AnimalHook(MovingEntity animal, long interval, Item item, int radius) {
+    public AnimalHook(MovingEntity animal, long interval, Item[] items, int radius) {
         super(animal);
         this.radius = radius;
         this.interval = interval;
-        this.item = item;
+        this.items = items;
         this.radius = radius;
     }
 
@@ -40,9 +40,12 @@ public class AnimalHook extends MovingEntityHook{
             double nearest = this.radius * this.radius;
 
             for (Player player : this.getEntity().getLevel().getPlayers().values()) {
-                if (this.getEntity().distanceSquared(player) < nearest && player.getInventory().getItemInHand().getId() == item.getId()) {
-                    near = player;
-                    nearest = this.getEntity().distance(player);
+                for (Item item : this.items) {
+                    if (this.getEntity().distanceSquared(player) < nearest && player.getInventory().getItemInHand().getId() == item.getId()) {
+                        near = player;
+                        nearest = this.getEntity().distance(player);
+                        break;
+                    }
                 }
             }
             if (entity.getTargetFinder() == null) {
@@ -51,7 +54,7 @@ public class AnimalHook extends MovingEntityHook{
 
             if (near != null) {
                 if (entity.getTargetFinder() instanceof StrollingTargetFinder) {
-                    entity.setTargetFinder(new AreaPlayerHoldTargetFinder(entity, interval, item, radius));
+                    entity.setTargetFinder(new AreaPlayerHoldTargetFinder(entity, interval, items, radius));
                 }
             } else {
                 if (entity.getTargetFinder() instanceof AreaPlayerHoldTargetFinder) {

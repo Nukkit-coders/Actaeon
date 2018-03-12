@@ -17,7 +17,7 @@ import me.onebone.actaeon.entity.MovingEntity;
  * ||||
  */
 public class AnimalGrowHook extends MovingEntityHook {
-    private int growTick;
+    private long growTick;
 
     public AnimalGrowHook(MovingEntity animal, int growTick) {
         super(animal);

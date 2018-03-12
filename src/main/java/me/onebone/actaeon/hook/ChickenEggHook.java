@@ -20,7 +20,7 @@ import me.onebone.actaeon.task.ChickenEggTask;
  * ||||
  */
 public class ChickenEggHook extends MovingEntityHook {
-    private int nextEggTick;
+    private long nextEggTick;
 
     public ChickenEggHook(MovingEntity animal) {
         super(animal);

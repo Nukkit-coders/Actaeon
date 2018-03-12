@@ -23,8 +23,10 @@ public class Cow extends Animal implements EntityAgeable{
 		if(isBaby){
 			this.addHook("grow", new AnimalGrowHook(this, Utils.rand(20*60*10,20*60*20)));
 		}
-		this.addHook("targetFinder", new AnimalHook(this, 500, Item.get(Item.WHEAT), 10));
+		this.addHook("targetFinder", new AnimalHook(this, 500, new Item[]{Item.get(Item.WHEAT)}, 10));
 	}
+
+
 
 	@Override
 	public int getNetworkId(){
@@ -32,24 +34,32 @@ public class Cow extends Animal implements EntityAgeable{
 	}
 
 	@Override
-	public float getWidth(){
+	public float getWidth() {
+		if (this.isBaby()) {
+			return 0.45f;
+		}
 		return 0.9f;
 	}
 
 	@Override
-	public float getHeight(){
-		if (isBaby()) {
-			return 0.65f;
+	public float getHeight() {
+		if (this.isBaby()) {
+			return 0.7f;
 		}
-		return 1.3f;
+		return 1.4f;
 	}
 
 	@Override
-	public float getEyeHeight(){
-		if (isBaby()){
+	public float getEyeHeight() {
+		if (this.isBaby()) {
 			return 0.65f;
 		}
 		return 1.2f;
+	}
+
+	@Override
+	public String getName() {
+		return this.getNameTag();
 	}
 
 	@Override
@@ -61,11 +71,12 @@ public class Cow extends Animal implements EntityAgeable{
 	public Item[] getDrops(){
 		if(!isBaby()) {
 			Random random = new Random();
+			int meatCount = random.nextInt(3) + 1;
 			Item leather = Item.get(Item.LEATHER, 0, random.nextInt(2));
-			Item meat = Item.get(Item.RAW_BEEF, 0, random.nextInt(3) + 1);
+			Item meat = Item.get(Item.RAW_BEEF, 0, meatCount);
 			EntityDamageEvent cause = this.getLastDamageCause();
 			if (cause.getCause() == EntityDamageEvent.DamageCause.FIRE) {
-				meat = Item.get(Item.STEAK, 0, random.nextInt(3) + 1);
+				meat = Item.get(Item.STEAK, 0, meatCount);
 			}
 			this.getLevel().dropExpOrb(this,random.nextInt(3) + 1);
 			return new Item[]{leather, meat};
