@@ -24,13 +24,13 @@ public class ChickenEggHook extends MovingEntityHook {
 
     public ChickenEggHook(MovingEntity animal) {
         super(animal);
-        nextEggTick = Server.getInstance().getTick()+Utils.rand(6000,12000);
+        nextEggTick = Server.getInstance().getTick() + Utils.rand(6000, 12000);
     }
 
     @Override
     public void onUpdate(int tick) {
-        if(tick >= nextEggTick) {
-            nextEggTick = tick+Utils.rand(6000,12000);
+        if (tick >= nextEggTick) {
+            nextEggTick = tick + Utils.rand(6000, 12000);
             this.entity.updateBotTask(new ChickenEggTask(entity));
         }
     }

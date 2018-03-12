@@ -1,6 +1,5 @@
 package me.onebone.actaeon.hook;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import me.onebone.actaeon.entity.MovingEntity;
 
@@ -24,8 +23,13 @@ public abstract class MovingEntityHook {
         return entity;
     }
 
-    public void onUpdate(int tick) {}
+    public void onUpdate(int tick) {
+    }
 
-    public void onDamage(EntityDamageEvent soure) {}
+    public void onDamage(EntityDamageEvent source) {
+    }
 
+    public boolean shouldExecute() {
+        return true;
+    }
 }

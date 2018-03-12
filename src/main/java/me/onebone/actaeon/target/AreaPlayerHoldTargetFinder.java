@@ -6,22 +6,22 @@ import me.onebone.actaeon.entity.MovingEntity;
 
 public class AreaPlayerHoldTargetFinder extends TargetFinder {
 
-	private Item[] items;
+    private Item[] items;
     private int radius;
 
-	public AreaPlayerHoldTargetFinder(MovingEntity entity, long interval, Item[] items, int radius){
-		super(entity, interval);
-		this.items = items;
+    public AreaPlayerHoldTargetFinder(MovingEntity entity, long interval, Item[] items, int radius) {
+        super(entity, interval);
+        this.items = items;
         this.radius = radius;
-	}
+    }
 
-	protected void find() {
+    protected void find() {
         Player near = null;
         double nearest = this.radius * this.radius;
 
-        for (Player player: this.getEntity().getLevel().getPlayers().values()) {
-            if (this.getEntity().distanceSquared(player) < nearest){
-                for (Item item: this.items) {
+        for (Player player : this.getEntity().getLevel().getPlayers().values()) {
+            if (this.getEntity().distanceSquared(player) < nearest) {
+                for (Item item : this.items) {
                     if (player.getInventory().getItemInHand().equals(item, false, false)) {
                         near = player;
                         nearest = this.getEntity().distance(player);
@@ -38,5 +38,5 @@ public class AreaPlayerHoldTargetFinder extends TargetFinder {
             //this.getEntity().getRoute().forceStop();
             this.getEntity().setTarget(null, this.getEntity().getName());
         }
-	}
+    }
 }

@@ -21,7 +21,7 @@ public class SheepWoolHook extends MovingEntityHook {
     public void onUpdate(int tick) {
         if (tick >= woolTick) {
             if (entity.namedTag.contains("Sheared") && entity.namedTag.getByte("Sheared") != 0) {
-                entity.namedTag.putByte("Sheared",1);
+                entity.namedTag.putByte("Sheared", 1);
             }
         }
     }

@@ -2,16 +2,12 @@ package me.onebone.actaeon.runnable;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.utils.TextFormat;
-import me.onebone.actaeon.entity.animal.Pig;
 import me.onebone.actaeon.route.RouteFinder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
