@@ -189,7 +189,7 @@ abstract public class MovingEntity extends EntityCreature {
                 AxisAlignedBB bb = this.boundingBox.clone().offset(this.motionX, this.motionY, this.motionZ);
                 Block[] blocks = this.level.getCollisionBlocks(bb);
 
-                boolean jump = true;
+                boolean jump = false;
                 boolean step = true;
 
                 for (Block b : blocks) {
@@ -197,12 +197,13 @@ abstract public class MovingEntity extends EntityCreature {
                     if (blockBB == null || b.canPassThrough())
                         continue;
 
-                    if (blockBB.maxY - this.boundingBox.minY > getJumpHeight()) {
-                        jump = false;
+                    double diffY = blockBB.maxY - this.boundingBox.minY;
+                    if (diffY < getJumpHeight()) {
+                        jump = true;
                     }
 
                     if (step)
-                        step = blockBB.maxY - this.boundingBox.minY <= getStepHeight();
+                        step = diffY <= getStepHeight();
                 }
 
                 if (jump && !step) {
