@@ -77,14 +77,84 @@ public abstract class RouteFinder {
 
     public void setBoundingBox(AxisAlignedBB bb) {
         if (bb == null) {
-            this.aabb = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+            this.aabb = new AxisAlignedBB() {
+                @Override
+                public double getMinX() {
+                    return 0;
+                }
+
+                @Override
+                public double getMinY() {
+                    return 0;
+                }
+
+                @Override
+                public double getMinZ() {
+                    return 0;
+                }
+
+                @Override
+                public double getMaxX() {
+                    return 0;
+                }
+
+                @Override
+                public double getMaxY() {
+                    return 0;
+                }
+
+                @Override
+                public double getMaxZ() {
+                    return 0;
+                }
+
+                @Override
+                public AxisAlignedBB clone() {
+                    return null;
+                }
+            };
         }
 
         this.aabb = bb;
     }
 
     public AxisAlignedBB getBoundingBox() {
-        if (this.aabb == null) return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+        if (this.aabb == null) return new AxisAlignedBB() {
+            @Override
+            public double getMinX() {
+                return 0;
+            }
+
+            @Override
+            public double getMinY() {
+                return 0;
+            }
+
+            @Override
+            public double getMinZ() {
+                return 0;
+            }
+
+            @Override
+            public double getMaxX() {
+                return 0;
+            }
+
+            @Override
+            public double getMaxY() {
+                return 0;
+            }
+
+            @Override
+            public double getMaxZ() {
+                return 0;
+            }
+
+            @Override
+            public AxisAlignedBB clone() {
+                return null;
+            }
+        };
 
         return this.aabb.clone();
     }

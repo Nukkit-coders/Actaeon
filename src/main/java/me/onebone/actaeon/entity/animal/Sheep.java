@@ -161,7 +161,7 @@ public class Sheep extends Animal {
         this.sheared = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
 
-        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), this.level.rand.nextInt(2) + 1));
+        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
 
         this.addHook("Sheared", new SheepWoolHook(this, Utils.rand(20 * 60 * 3, 20 * 60 * 10))); // After 3-10 minutes, the sheep's wool will grow back
         return true;

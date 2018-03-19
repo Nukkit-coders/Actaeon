@@ -1,6 +1,6 @@
-name: Actaeon
-version: "0.0.1beta"
-author: onebone
+name: Actaeon-NukkitX
+version: "0.1-BETA"
+author: ["onebone", "NycuRO"]
 api: [1.0.0]
 main: me.onebone.actaeon.Actaeon
 load: STARTUP

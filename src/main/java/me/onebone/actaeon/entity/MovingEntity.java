@@ -23,6 +23,7 @@ import me.onebone.actaeon.task.MovingEntityTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 abstract public class MovingEntity extends EntityCreature {
 
@@ -174,13 +175,13 @@ abstract public class MovingEntity extends EntityCreature {
                     double minY = block.getFloorY();
                     double maxY = minY + 1 - f;
 
-                    swim = Math.max(swim, this.boundingBox.maxY >= maxY ? maxY - this.boundingBox.minY : this.boundingBox.maxY - minY);
+                    swim = Math.max(swim, this.boundingBox.getMaxX() >= maxY ? maxY - this.boundingBox.getMinY() : this.boundingBox.getMaxZ() - minY);
                     break;
                 }
             }
 
             if (swim != 0) {
-                if (this.level.rand.nextFloat() < 0.8) {
+                if (ThreadLocalRandom.current().nextFloat() < 0.8) {
                     this.motionY = Math.min(0.2, this.motionY + (0.3 * swim));
                 }
             }
@@ -197,7 +198,7 @@ abstract public class MovingEntity extends EntityCreature {
                     if (blockBB == null || b.canPassThrough())
                         continue;
 
-                    double diffY = blockBB.maxY - this.boundingBox.minY;
+                    double diffY = blockBB.getMaxY() - this.boundingBox.getMinY();
                     if (diffY < getJumpHeight()) {
                         jump = true;
                     }
@@ -291,12 +292,12 @@ abstract public class MovingEntity extends EntityCreature {
 
         double maxY = 0;
         for (AxisAlignedBB bb : list) {
-            if (bb.maxY > maxY) {
-                maxY = bb.maxY;
+            if (bb.getMaxY() > maxY) {
+                maxY = bb.getMaxY();
             }
         }
 
-        this.onGround = (maxY == this.boundingBox.minY);
+        this.onGround = (maxY == this.boundingBox.getMinY());
     }
 
     @Override
